@@ -69,8 +69,8 @@ def remove_islands(mask):
         mask = (labeled_array == largest_label)
 
     # Fill any holes in the main landmass
-    country_mask_filled = binary_fill_holes(mask)
-    return country_mask_filled
+    city_mask_filled = binary_fill_holes(mask)
+    return city_mask_filled
 
 def smooth_contour(contour, sigma=2):
     xs = gaussian_filter1d(contour[:, 1], sigma)
@@ -113,15 +113,15 @@ FLOOR_THRESH = 0.0
 UPSCALE_FACTOR = 4
 HIGH_RES_SHAPE = (SHAPE[0] * UPSCALE_FACTOR, SHAPE[1] * UPSCALE_FACTOR)
 
-#---Generate the country---#
+#---Generate the city---#
 
 created_noise = create_noise(SHAPE, SCALE, OCTAVES, PERSISTENCE, LACUNARITY, SEED)
 
 calculated_threshold = calculate_threshold(SHAPE, calculate_distance_to_edge(SHAPE),
                                            CENTER_THRESH, FLOOR_THRESH, MIN_THRESH, EDGE_BAND)
 
-# Create mask for country (white land)
-country_mask = created_noise < calculated_threshold
+# Create mask for city (white land)
+city_mask = created_noise < calculated_threshold
 
 # Remove islands and create the image
-create_image(remove_islands(country_mask), SHAPE)
+create_image(remove_islands(city_mask), SHAPE)
