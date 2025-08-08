@@ -1,9 +1,9 @@
+import visualize as vis
+
 import noise
 import numpy as np
-import skimage.measure
-import svgwrite
-from scipy.ndimage import label, binary_fill_holes, center_of_mass, shift, gaussian_filter1d
 
+from scipy.ndimage import label, binary_fill_holes
 
 def create_noise(shape, scale, octaves, persistence, lacunarity, seed):
     # Coordinate grid
@@ -72,31 +72,6 @@ def remove_islands(mask):
     city_mask_filled = binary_fill_holes(mask)
     return city_mask_filled
 
-def smooth_contour(contour, sigma=2):
-    xs = gaussian_filter1d(contour[:, 1], sigma)
-    ys = gaussian_filter1d(contour[:, 0], sigma)
-    return np.vstack((ys, xs)).T
-
-def create_image(filled_mask, shape):
-    cy, cx = center_of_mass(filled_mask)
-
-    center_y, center_x = shape[0] / 2, shape[1] / 2
-
-    shift_y = center_y - cy
-    shift_x = center_x - cx
-
-    shifted_mask = shift(filled_mask.astype(float), shift=(shift_y, shift_x), order=0, mode='constant', cval=0)
-    shifted_mask = shifted_mask > 0.5
-
-    contours = skimage.measure.find_contours(shifted_mask, 0.5)
-
-    dwg = svgwrite.Drawing("city.svg", size=(shape[1], shape[0]))
-    for contour in contours:
-        smoothed = smooth_contour(contour, sigma=2)
-        points = [(x, y) for y, x in smoothed]
-        dwg.add(dwg.polygon(points, fill='white', stroke='black', stroke_width=1))
-    dwg.save()
-
 # Parameters
 SHAPE = (1024, 1024)
 SCALE = 0.5
@@ -124,4 +99,4 @@ calculated_threshold = calculate_threshold(SHAPE, calculate_distance_to_edge(SHA
 city_mask = created_noise < calculated_threshold
 
 # Remove islands and create the image
-create_image(remove_islands(city_mask), SHAPE)
+vis.create_image(remove_islands(city_mask), SHAPE)
