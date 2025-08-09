@@ -30,8 +30,8 @@ city_mask = created_noise < calculated_threshold
 city_mask = city.remove_islands(city_mask)
 
 #---Generate city zones---#
-
-zone_masks, colours = zones.create_zones(city_mask, created_noise)
+zone_thresholds = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+zone_masks, colours = zones.create_zones(city_mask, created_noise, thresholds=zone_thresholds)
 
 #---Visualize the city---#
 

@@ -1,10 +1,17 @@
+import random
 import numpy as np
 
 def create_zones(mask, world, thresholds=None, colours=None):
     if thresholds is None:
         thresholds = [0.3, 0.6]
     if colours is None:
-        colours = ['#a6cee3', '#1f78b4', '#b2df8a']
+        colours = []
+        for _ in thresholds:
+            random_integer = random.randint(0, 0xFFFFFF)
+            hex_color = '#{:06x}'.format(random_integer)
+
+            colours.append(hex_color)
+
 
     previous_threshold = 0.0
     zone_masks = []
