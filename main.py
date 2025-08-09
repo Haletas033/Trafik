@@ -1,5 +1,6 @@
 import visualize as vis
 import city
+import zones
 
 import numpy as np
 
@@ -26,7 +27,10 @@ calculated_threshold = city.calculate_threshold(SHAPE, city.calculate_distance_t
 # Create mask for city (white land)
 city_mask = created_noise < calculated_threshold
 
+city_mask = city.remove_islands(city_mask)
+
 #---Visualize the city---#
 
 # Remove islands and create the image
-vis.create_image(city.remove_islands(city_mask), SHAPE)
+zone_masks, colours = zones.create_zones(city_mask, created_noise)
+vis.create_image(zone_masks, colours, SHAPE)

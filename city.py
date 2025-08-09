@@ -1,5 +1,5 @@
-import noise
 import numpy as np
+import noise
 
 from scipy.ndimage import label, binary_fill_holes
 
@@ -24,6 +24,7 @@ def create_noise(shape, scale, octaves, persistence, lacunarity, seed):
     # Normalize to 0–1 range
     world = (world - world.min()) / (world.max() - world.min())
     return world
+
 
 def calculate_distance_to_edge(shape):
     # Pixel grid for distance calculation
