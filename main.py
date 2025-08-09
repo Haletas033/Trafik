@@ -29,8 +29,12 @@ city_mask = created_noise < calculated_threshold
 
 city_mask = city.remove_islands(city_mask)
 
+#---Generate city zones---#
+
+zone_masks, colours = zones.create_zones(city_mask, created_noise)
+
 #---Visualize the city---#
 
 # Remove islands and create the image
-zone_masks, colours = zones.create_zones(city_mask, created_noise)
 vis.create_image(zone_masks, colours, SHAPE)
+vis.optimize_svg("city.svg")

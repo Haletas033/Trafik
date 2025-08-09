@@ -1,6 +1,8 @@
 import skimage.measure
 import svgwrite
+import os
 import numpy as np
+from scour import scour
 
 from scipy.ndimage import center_of_mass, shift, gaussian_filter1d
 
@@ -21,7 +23,7 @@ def create_image(zone_masks, colours, shape):
     shift_y = center_y - cy
     shift_x = center_x - cx
 
-    dwg = svgwrite.Drawing("city.svg", size=(shape[1], shape[0]))
+    dwg = svgwrite.Drawing("temp_city.svg", size=(shape[1], shape[0]))
 
     for zone_mask, color in zip(zone_masks, colours):
         shifted_mask = shift(zone_mask.astype(float), shift=(shift_y, shift_x), order=0, mode='constant', cval=0)
@@ -35,3 +37,17 @@ def create_image(zone_masks, colours, shape):
             dwg.add(dwg.polygon(points, fill=color))
 
     dwg.save()
+
+def optimize_svg(output_file):
+    options = scour.sanitizeOptions()
+    options.remove_metadata = True
+    options.enable_viewboxing = True
+    options.strip_comments = True
+    options.shorten_ids = True
+    options.float_precision = 2
+
+    with open("temp_city.svg", "r", encoding="utf-8") as infile, open(output_file, "w", encoding="utf-8") as outfile:
+        svg_data = infile.read()
+        optimized_svg = scour.scourString(svg_data, options)
+        outfile.write(optimized_svg)
+    os.remove("temp_city.svg")
