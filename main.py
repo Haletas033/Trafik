@@ -1,6 +1,7 @@
 import visualize as vis
 import city
 import zones
+import roads
 
 import numpy as np
 
@@ -30,11 +31,16 @@ city_mask = created_noise < calculated_threshold
 city_mask = city.remove_islands(city_mask)
 
 #---Generate city zones---#
-zone_thresholds = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+zone_thresholds = [0.3, 0.4, 0.6, 0.9]
 zone_masks, colours = zones.create_zones(city_mask, created_noise, thresholds=zone_thresholds)
+
+#---generate_roads---#
+
+coords = roads.create_city_centers(city_mask, probability=0.0001)
+road_paths = roads.generate_roads(city_mask, coords, step_length=10, split_prob=0.01)
 
 #---Visualize the city---#
 
 # Remove islands and create the image
-vis.create_image(zone_masks, colours, SHAPE)
+vis.create_image(zone_masks, colours, road_paths, SHAPE)
 vis.optimize_svg("city.svg")

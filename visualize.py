@@ -13,7 +13,7 @@ def smooth_contour(contour, sigma=2):
     return np.vstack((ys, xs)).T
 
 
-def create_image(zone_masks, colours, shape):
+def create_image(zone_masks, colours, roads, shape):
     combined_mask = np.any(zone_masks, axis=0)
 
     cy, cx = center_of_mass(combined_mask)
@@ -35,6 +35,11 @@ def create_image(zone_masks, colours, shape):
             smoothed = smooth_contour(contour, sigma=2)
             points = [(x, y) for y, x in smoothed]
             dwg.add(dwg.polygon(points, fill=color))
+
+    for (x1, y1), (x2, y2) in roads:
+        sx1, sy1 = x1 + shift_x, y1 + shift_y
+        sx2, sy2 = x2 + shift_x, y2 + shift_y
+        dwg.add(dwg.line(start=(sx1, sy1), end=(sx2, sy2), stroke='black', stroke_width=1.5))
 
     dwg.save()
 
