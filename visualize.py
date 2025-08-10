@@ -13,7 +13,7 @@ def smooth_contour(contour, sigma=2):
     return np.vstack((ys, xs)).T
 
 
-def create_image(zone_masks, colours, roads, shape):
+def create_image(zone_masks, colours, roads, buildings, shape, building_size=2):
     combined_mask = np.any(zone_masks, axis=0)
 
     cy, cx = center_of_mass(combined_mask)
@@ -40,6 +40,11 @@ def create_image(zone_masks, colours, roads, shape):
         sx1, sy1 = x1 + shift_x, y1 + shift_y
         sx2, sy2 = x2 + shift_x, y2 + shift_y
         dwg.add(dwg.line(start=(sx1, sy1), end=(sx2, sy2), stroke='black', stroke_width=1.5))
+
+    for building_corners in buildings:
+        print(building_corners)
+        shifted_points = [(x + shift_x, y + shift_y) for x, y in building_corners]
+        dwg.add(dwg.polygon(shifted_points, fill='gray', stroke='black', stroke_width=0.5))
 
     dwg.save()
 

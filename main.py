@@ -2,6 +2,7 @@ import visualize as vis
 import city
 import zones
 import roads
+import buildings as bds
 
 import numpy as np
 
@@ -34,13 +35,19 @@ city_mask = city.remove_islands(city_mask)
 zone_thresholds = [0.3, 0.4, 0.6, 0.9]
 zone_masks, colours = zones.create_zones(city_mask, created_noise, thresholds=zone_thresholds)
 
-#---generate_roads---#
+#---Generate roads---#
 
 coords = roads.create_city_centers(city_mask, probability=0.0001)
 road_paths = roads.generate_roads(city_mask, coords, step_length=10, split_prob=0.01)
 
+#---Generate buildings---#
+
+buildings, building_polygons = bds.add_buildings_along_roads_rotated(road_paths)
+vis.create_image(zone_masks, colours, road_paths, building_polygons, SHAPE)
+
+
 #---Visualize the city---#
 
 # Remove islands and create the image
-vis.create_image(zone_masks, colours, road_paths, SHAPE)
+vis.create_image(zone_masks, colours, road_paths, building_polygons, SHAPE)
 vis.optimize_svg("city.svg")
